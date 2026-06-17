@@ -357,7 +357,7 @@ async function queryData(t){
     var queries=[];
     // 路1：验证DB学校（冲稳保各5所，搜最新分数线）
     var dbSchools=[];
-    if(j&&j.chong)for(var i=0;i<Math.min(3,j.chong.length);i++)dbSchools.push(j.chong[i].school);
+    if(j&&j.chong)for(var i=0;i<Math.min(5,j.chong.length);i++)dbSchools.push(j.chong[i].school);
     if(j&&j.wen)for(var i=0;i<Math.min(5,j.wen.length);i++)dbSchools.push(j.wen[i].school);
     if(j&&j.bao)for(var i=0;i<Math.min(5,j.bao.length);i++)dbSchools.push(j.bao[i].school);
     for(var i=0;i<dbSchools.length;i++){
