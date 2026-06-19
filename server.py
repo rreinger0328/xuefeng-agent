@@ -83,6 +83,14 @@ class Handler(BaseHTTPRequestHandler):
                 return
             length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(length) if length else b'{}'
+            # Inject model from .env if client didn't send one
+            try:
+                body_json = json.loads(body)
+                if 'model' not in body_json or not body_json['model']:
+                    body_json['model'] = LLM_MODEL
+                body = json.dumps(body_json).encode('utf-8')
+            except Exception:
+                pass
             try:
                 req = urllib.request.Request(
                     LLM_URL.rstrip('/') + '/v1/chat/completions',
