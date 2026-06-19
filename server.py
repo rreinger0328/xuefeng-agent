@@ -108,7 +108,11 @@ class Handler(BaseHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(resp.read())
             except urllib.error.HTTPError as e:
-                self._send({'error': f'LLM API error: {e.code} {e.reason}'}, e.code)
+                detail = ''
+                try: detail = e.read().decode('utf-8', errors='replace')[:500]
+                except: pass
+                print(f'[LLM PROXY ERROR] {e.code}: {detail}')
+                self._send({'error': f'LLM API error {e.code}: {detail}'}, e.code)
             except Exception as e:
                 self._send({'error': f'LLM proxy error: {str(e)}'}, 502)
             return
