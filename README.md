@@ -143,6 +143,57 @@
 
 ---
 
+## 🐳 Docker 部署
+
+### 方式一：docker-compose（推荐）
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/你的用户名/xuefeng-agent.git
+cd xuefeng-agent
+
+# 2. 启动（自动拉取/构建镜像，后台运行）
+docker compose up -d
+
+# 3. 浏览器打开 http://localhost:8765
+```
+
+`docker compose up` 默认本地构建。如果你想直接用 GitHub Actions 推送的现成镜像（不用本地构建），编辑 `docker-compose.yaml`，注释掉 `build: .` 和 `image: xuefeng-agent:latest` 两行，取消 `ghcr.io/...` 那行的注释，把 `your-username` 改成你的 GitHub 用户名。
+
+**管理命令**：
+
+```bash
+docker compose down          # 停止
+docker compose up -d --build # 本地构建后启动
+docker compose logs -f       # 查看日志
+```
+
+### 方式二：直接用 Docker
+
+```bash
+# 拉取镜像
+docker pull ghcr.io/你的用户名/xuefeng-agent:latest
+
+# 运行
+docker run -d \
+  --name xuefeng-agent \
+  -p 8765:8765 \
+  ghcr.io/你的用户名/xuefeng-agent:latest
+
+# 浏览器打开 http://localhost:8765
+```
+
+### 方式三：本地构建
+
+```bash
+docker build -t xuefeng-agent .
+docker run -d --name xuefeng-agent -p 8765:8765 xuefeng-agent
+```
+
+> **说明**：数据库（143 MB）在镜像构建时已预解压，容器启动即用，无需等待。镜像推送到 GitHub Container Registry，完全免费，不依赖 Docker Hub。
+
+---
+
 ## 常见问题
 
 **数据准不准？** — 来自各省考试院官方投档线，多轮联网交叉验证。但录取数据每年变，最终以官方为准。
