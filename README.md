@@ -18,8 +18,8 @@
 ```
 1. 装 Python（python.org，勾选 Add to PATH）
 2. 下载本项目 ZIP → 解压到桌面
-3. 双击 启动.bat → 浏览器自动打开
-4. 点右上角 API设置 → 填 DeepSeek Key → 保存测试
+3. 复制 .env.example 为 .env，用记事本打开，填入 DeepSeek Key
+4. 双击 启动.bat → 浏览器自动打开
 5. 打字提问
 ```
 
@@ -33,7 +33,6 @@
 
 - **左侧对话列表** — 多轮对话独立保存，新建/切换/删除，关了浏览器回来还在
 - **顶部模式切换** — 报考（正经志愿分析）←→ 娱乐（张雪峰风格吐槽），一键切
-- **右上角 API 设置** — 填 Key、换模型，浏览器本地记住，下次不用重填
 - **🌓 深色模式** — 晚上用不刺眼
 - **输入框** — 打字回车发送，Shift+回车换行
 
@@ -49,7 +48,7 @@
 | 🔍 **联网搜索** | 填了 Tavily Key 用 AI 搜索（更准）；不填用百度兜底 |
 | 📋 **省份政策感知** | 浙江 80 志愿 / 山东 96 志愿 / 老高考 8-12 所…自动适配 |
 | 💬 **上下文记忆** | 追问不用重复说，agent 记得你前面说过什么 |
-| 🔒 **隐私安全** | 数据全在本地，Key 存浏览器，不上传任何服务器 |
+| 🔒 **隐私安全** | 数据全在本地，Key 存服务器 .env，不上传任何第三方 |
 
 ---
 
@@ -152,10 +151,14 @@
 git clone https://github.com/你的用户名/xuefeng-agent.git
 cd xuefeng-agent
 
-# 2. 启动（自动拉取/构建镜像，后台运行）
+# 2. 配置 API Key
+cp .env.example .env
+# 编辑 .env，填入你的 DeepSeek Key（和 Tavily Key 可选）
+
+# 3. 启动（自动拉取/构建镜像，后台运行）
 docker compose up -d
 
-# 3. 浏览器打开 http://localhost:8765
+# 4. 浏览器打开 http://localhost:8765
 ```
 
 `docker compose up` 默认本地构建。如果你想直接用 GitHub Actions 推送的现成镜像（不用本地构建），编辑 `docker-compose.yaml`，注释掉 `build: .` 和 `image: xuefeng-agent:latest` 两行，取消 `ghcr.io/...` 那行的注释，把 `your-username` 改成你的 GitHub 用户名。
@@ -174,10 +177,13 @@ docker compose logs -f       # 查看日志
 # 拉取镜像
 docker pull ghcr.io/你的用户名/xuefeng-agent:latest
 
-# 运行
+# 创建 .env 文件（cp .env.example .env 并编辑）
+
+# 运行（挂载 .env 进容器）
 docker run -d \
   --name xuefeng-agent \
   -p 8765:8765 \
+  -v $(pwd)/.env:/app/.env:ro \
   ghcr.io/你的用户名/xuefeng-agent:latest
 
 # 浏览器打开 http://localhost:8765
@@ -186,11 +192,12 @@ docker run -d \
 ### 方式三：本地构建
 
 ```bash
+cp .env.example .env   # 编辑 .env 填入 Key
 docker build -t xuefeng-agent .
-docker run -d --name xuefeng-agent -p 8765:8765 xuefeng-agent
+docker run -d --name xuefeng-agent -p 8765:8765 -v $(pwd)/.env:/app/.env:ro xuefeng-agent
 ```
 
-> **说明**：数据库（143 MB）在镜像构建时已预解压，容器启动即用，无需等待。镜像推送到 GitHub Container Registry，完全免费，不依赖 Docker Hub。
+> **说明**：数据库（143 MB）在镜像构建时已预解压，容器启动即用。API Key 通过 `.env` 文件注入，不暴露给浏览器，安全性更高。镜像推送到 GitHub Container Registry，完全免费，不依赖 Docker Hub。
 
 ---
 

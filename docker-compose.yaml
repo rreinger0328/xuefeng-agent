@@ -2,10 +2,9 @@ version: "3.8"
 
 services:
   xuefeng-agent:
-    # 本地构建（clone 后直接 docker compose up -d 即可）
     build: .
     image: xuefeng-agent:latest
-    # 如果不想本地构建，想直接用 GitHub 推送的镜像，注释掉上面两行，
+    # 如果不想本地构建，直接用 GitHub 推送的镜像，注释掉上面两行，
     # 取消下面这行的注释（把 your-username 改成你的 GitHub 用户名）：
     # image: ghcr.io/your-username/xuefeng-agent:latest
     container_name: xuefeng-agent
@@ -14,3 +13,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ=Asia/Shanghai
+    # .env 文件映射：把本地的 .env 挂载进容器
+    # 首次使用：cp .env.example .env → 编辑 .env 填入 Key → docker compose up -d
+    env_file:
+      - .env
