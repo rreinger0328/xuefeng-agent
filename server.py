@@ -404,6 +404,7 @@ async function queryData(t){
 
   console.log('DEBUG queryData params:',JSON.stringify({province:info.province,rank:info.rank,score:info.score,majors:info.majors}));
   if(!info.province&&!info.score){console.log('缺少省份和分数，跳过DB');return'缺少省份或分数位次';}
+  if(!info.rank&&!info.score){console.log('未提取到位次或分数，跳过DB');return'请提供你的位次（如位次10500）或分数（如655分）';}
 
   // 第3步：搜索本地数据库
   var dbData='';
