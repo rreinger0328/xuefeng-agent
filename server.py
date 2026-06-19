@@ -14,9 +14,10 @@ if not os.path.exists(DB_PATH) and os.path.exists(GZ_PATH):
 HAS_DB = os.path.exists(DB_PATH)
 
 def load_env():
-    """从 .env 文件加载配置（不依赖 python-dotenv）"""
-    env_path = os.path.join(HERE, '.env')
+    """加载配置：优先环境变量（Docker env_file），其次 .env 文件（本地运行）"""
     config = {}
+    # 1. 先读 .env 文件（本地 python server.py 时使用）
+    env_path = os.path.join(HERE, '.env')
     if os.path.exists(env_path):
         with open(env_path, 'r', encoding='utf-8') as f:
             for line in f:
@@ -26,6 +27,11 @@ def load_env():
                 if '=' in line:
                     key, _, value = line.partition('=')
                     config[key.strip()] = value.strip().strip('"').strip("'")
+    # 2. 环境变量覆盖（Docker env_file / docker run -e 时使用）
+    for key in ('LLM_API_KEY', 'LLM_BASE_URL', 'LLM_MODEL', 'TAVILY_KEY'):
+        env_val = os.environ.get(key, '')
+        if env_val:
+            config[key] = env_val
     return config
 
 ENV_CONFIG = load_env()
