@@ -470,7 +470,7 @@ async function queryData(t){
   if(webData)result+=webData+'\n';
   if(!dbData&&!webData)result+='DB和联网搜索均无结果。查询URL: recommend?province='+encodeURIComponent(info.province)+'&rank='+info.rank+'&score='+info.score+'&keyword='+encodeURIComponent((info.majors||[]).join(','))+'\n';
   return result;
-
+}
 
 // Event bindings
 function B(id,ev,fn){var el=S(id);if(el)el[ev]=fn;}
